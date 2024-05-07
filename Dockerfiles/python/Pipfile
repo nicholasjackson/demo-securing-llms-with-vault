@@ -1,0 +1,25 @@
+[[source]]
+url = 'https://pypi.python.org/simple'
+verify_ssl = true
+name = 'pypi'
+
+[packages]
+pandas = { }
+scikit-learn = { }
+ipykernel = { }
+accelerate = "*"
+bitsandbytes = {  }
+transformers = {extras = ["torch"] }
+datasets = "*"
+evaluate = "*"
+ipywidgets = "*"
+peft = "*"
+openpyxl = "*"
+einops  = "~=0.7.0"
+gguf = ">=0.1.0"
+numpy = "~=1.24.4"
+protobuf = ">=4.21.0,<5.0.0"
+torch = "~=2.1.1"
+sentencepiece = "~=0.1.98"
+pyzmq = "*"
+rich = "*"
