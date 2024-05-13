@@ -7,12 +7,12 @@ resource "container" "ollama" {
     id = resource.network.local.meta.id
   }
 
-  resources {
-    gpu {
-      driver     = "nvidia"
-      device_ids = ["0"]
-    }
-  }
+  //resources {
+  //  gpu {
+  //    driver     = "nvidia"
+  //    device_ids = ["0"]
+  //  }
+  //}
 
   volume {
     //source      = data("ollama")

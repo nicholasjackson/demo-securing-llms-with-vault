@@ -12,11 +12,4 @@ build_codeserver:
 		--push
 
 build_local:
-	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-	docker buildx create --name vscode || true
-	docker buildx use vscode
-	docker buildx inspect --bootstrap
-	docker buildx build \
-		-t ${REPO}:${VERSION} \
-	  . \
-		--load
+	docker build -t ${REPO}:${VERSION} .

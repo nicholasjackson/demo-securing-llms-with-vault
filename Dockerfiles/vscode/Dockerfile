@@ -1,20 +1,3 @@
-# Base with installed python dependencies
-FROM python:3.11-slim AS python-base
-
-# Install & use pipenv
-RUN python -m pip install --upgrade pip
-RUN pip install pipenv
-
-# Tell pipenv to create venv in the current directory
-ENV PIPENV_VENV_IN_PROJECT=1
-
-# Pipfile contains requests
-ADD Pipfile.lock Pipfile /usr/src/
-
-WORKDIR /usr/src
-
-RUN pipenv sync
-
 # Add llama CPP
 FROM ghcr.io/ggerganov/llama.cpp:full AS llama-cpp
 
@@ -36,6 +19,20 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
   python3-pip \
   pipx \
   openssh-server
+
+# Install & use pipenv
+RUN pip install pipenv --break-system-packages
+
+# Tell pipenv to create venv in the current directory
+ENV PIPENV_VENV_IN_PROJECT=1
+
+# Pipfile contains requests
+ADD Pipfile /usr/src/
+
+WORKDIR /usr/src
+
+RUN pipenv lock
+RUN pipenv sync
 
 # Clean packages
 RUN rm -rf /var/lib/apt/lists/*
@@ -69,7 +66,5 @@ RUN code-server --install-extension github.github-vscode-theme && \
     code-server --install-extension ms-toolsai.jupyter
 
 # Add the python virtual env
-RUN mkdir -v /usr/src/.venv
-COPY --from=python-base /usr/src/.venv/ /usr/src/.venv/
-
-WORKDIR /usr/src
+# RUN mkdir -v /usr/src/.venv
+# COPY --from=python-base /usr/src/.venv/ /usr/src/.venv/

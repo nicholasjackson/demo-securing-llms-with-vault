@@ -16,9 +16,5 @@ vault operator unseal $(cat /tmp/vault_init.json | jq -r .unseal_keys_b64[0])
 
 export VAULT_TOKEN=$(cat /tmp/vault_init.json | jq -r .root_token)
 
-# Enable transit secrets engine
-vault secrets enable transit
 
-# Create a new encryption key
-vault write transit/keys/kapsule exportable=true type=rsa-4096
 

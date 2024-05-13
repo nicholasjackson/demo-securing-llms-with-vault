@@ -48,7 +48,7 @@ resource "container" "vscode" {
 
   volume {
     source      = "./working"
-    destination = "/workshop"
+    destination = "/usr/src/working"
   }
 
   volume {
@@ -63,7 +63,7 @@ resource "container" "vscode" {
 
   volume {
     source      = resource.template.vscode_settings.destination
-    destination = "/workshop/.vscode/settings.json"
+    destination = "/usr/src/.vscode/settings.json"
   }
 
   volume {
@@ -77,12 +77,15 @@ resource "container" "vscode" {
   //}
 
   environment = {
-    KUBE_CONFIG_PATH = "/root/.kube/config"
-    KUBECONFIG       = "/root/.kube/config"
-    DEFAULT_FOLDER   = "/workshop"
-    PATH             = "/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    LC_ALL           = "C"
-    VAULT_ADDR       = "http://${resource.ingress.vault_http.local_address}"
+    KUBE_CONFIG_PATH  = "/root/.kube/config"
+    KUBECONFIG        = "/root/.kube/config"
+    DEFAULT_FOLDER    = "/workshop"
+    PATH              = "/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    LC_ALL            = "C"
+    VAULT_ADDR        = "http://${resource.ingress.vault_http.local_address}"
+    HUGGINGFACE_TOKEN = env("HUGGINGFACE_TOKEN")
+    DOCKER_USERNAME   = env("DOCKER_USERNAME")
+    DOCKER_PASSWORD   = env("DOCKER_PASSWORD")
   }
 
   // vscode
@@ -106,10 +109,10 @@ resource "container" "vscode" {
     }
   }
 
-  resources {
-    gpu {
-      driver     = "nvidia"
-      device_ids = ["0"]
-    }
-  }
+  //resources {
+  //  gpu {
+  //    driver     = "nvidia"
+  //    device_ids = ["0"]
+  //  }
+  //}
 }
