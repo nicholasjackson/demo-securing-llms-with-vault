@@ -1,4 +1,6 @@
 resource "container" "ollama" {
+  disabled = true
+
   image {
     name = "ollama/ollama:latest"
   }
@@ -32,6 +34,8 @@ resource "container" "ollama" {
 }
 
 resource "container" "ollama_ui" {
+  disabled = true
+
   network {
     id = resource.network.local.meta.id
   }
