@@ -1,4 +1,10 @@
 resource "k8s_cluster" "k3s" {
+  config {
+    docker {
+      no_proxy  = ["${resource.container.auth.container_name}:5001"]
+    }
+  }
+
   network {
     id = resource.network.local.meta.id
   }
@@ -35,11 +41,7 @@ resource "ingress" "vault_http" {
 # Configure the Vault Kubernetes service account
 resource "k8s_config" "vault_auth" {
   cluster = resource.k8s_cluster.k3s
-
-  docker {
-    no_proxy  = ["${resource.container.auth.container_name}:5001"]
-  }
-
+  
   paths = [
     "./config/vault_k8s_service_account.yaml",
   ]
