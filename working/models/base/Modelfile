@@ -1,4 +1,4 @@
-FROM ./finetuned-Q4_K_M.gguf
+FROM ./mistral.gguf
 
 TEMPLATE """[INST] {{ .System }} {{ .Prompt }} [/INST]"""
 
@@ -6,4 +6,4 @@ PARAMETER stop [/INST]
 PARAMETER stop [INST]
 PARAMETER temperature 0.8
 
-SYSTEM You are brain from Pinky and the Brain, acting as an assistant.
+SYSTEM "You are Brain from Pinky and the Brain, acting as an assistant."

@@ -15,8 +15,9 @@ import subprocess
 
 QUANTIZATION = '4bit'
 MODEL_ID = 'mistralai/Mistral-7B-v0.1'
-OUTPUT_DIR = os.path.abspath('./output')
-DATA_DIR = os.path.abspath('./data')
+OUTPUT_DIR = os.path.abspath('/usr/src/working/output')
+DATA_DIR = os.path.abspath('/usr/src/working/data')
+DATA_FILE = os.path.abspath(f'{DATA_DIR}/Questions.csv')
 MAX_STEPS=50
 CHECKPOINT_STEPS=10
 
@@ -101,37 +102,18 @@ tokenizer.pad_token = tokenizer.eos_token
 
 # ------ Load the datasets -------
 console.print("")
-console.print(f"Loading data from [white]{DATA_DIR}[/white]", style="bold magenta")
-
-common_columns = ['Title', 'Description', 'Owner', 'Owner Email', 'Speakers', 'Status', 'Date Submitted']
+console.print(f"Loading data from [white]{DATA_FILE}[/white]", style="bold magenta")
 
 # read the data files in the data directory
-dfs = []
-for f in glob.glob(f'{DATA_DIR}/*.xlsx'):
-    df = pd.read_excel(f)[common_columns]
-    dfs.append(df)
-
-# merge the files
-data = pd.concat(dfs)
-
-# set the column names
-data = data.set_axis(['title', 'description', 'owner', 'email', 'speakers', 'status','submitted'], axis=1)
-
-# remove null descriptions
-data = data.dropna()
-
-# remove non ascii characters
-data['title'] = data['title'].str.encode('ascii','ignore').str.decode('ascii')
-data['description'] = data['description'].str.encode('ascii','ignore').str.decode('ascii')
+data = pd.read_csv(DATA_FILE)
 
 dataset = Dataset.from_pandas(data)
 
-dataset = dataset.train_test_split(test_size=0.1)
+dataset = dataset.train_test_split(test_size=0.1, )
 val_test_dataset = dataset['test'].train_test_split(test_size=0.5)
 
 train_dataset = dataset["train"]
-eval_dataset = val_test_dataset["train"]
-test_dataset = val_test_dataset["test"]
+eval_dataset = val_test_dataset["test"]
 
 
 # ------ Format data for training -------
@@ -140,34 +122,26 @@ console.print(f"Format the data from training", style="bold magenta")
 
 def process_prompt(data):
     messages = [
-        {
-            "role": "user", 
-            "content": f"Create me a conference abstract about {data['title']}",
-        },
-        {
-            "role": "assistant", 
-            "content": data['description'],
-        },
+        { "role": "user", "content": f"{data['Question']}" },
+        { "role": "assistant", "content": f"{data['Answer']}" }
     ]
 
-    prompt = tokenizer.apply_chat_template(messages, tokenize=False)
-    result = tokenizer(prompt, return_token_type_ids=True, padding='max_length', max_length=2048, truncation=True)
-
+    prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=False)
+    result = tokenizer(prompt, padding='max_length', max_length=512, truncation=True)
+    
     # set labels and input ids to the same for self supervised training
     # https://neptune.ai/blog/self-supervised-learning
     result["labels"] = result["input_ids"].copy()
     return result
 
-tokenizer_columns = ["input_ids","token_type_ids","attention_mask","labels"]
+##tokenizer_columns = ["input_ids","token_type_ids","attention_mask","labels"]
 
-tokenized_train_ds = train_dataset.map(process_prompt,num_proc=os.cpu_count())
-tokenized_val_ds = eval_dataset.map(process_prompt,num_proc=os.cpu_count())
+tokenized_train_ds = train_dataset.map(process_prompt, num_proc=os.cpu_count())
+tokenized_val_ds = eval_dataset.map(process_prompt, num_proc=os.cpu_count())
 
 # Remove unecessary columns
-tokenized_train_ds = tokenized_train_ds.remove_columns(train_dataset.column_names)
-tokenized_val_ds = tokenized_val_ds.remove_columns(train_dataset.column_names)
-
-data.info()
+#tokenized_train_ds = tokenized_train_ds.remove_columns(train_dataset.column_names)
+#tokenized_val_ds = tokenized_val_ds.remove_columns(train_dataset.column_names)
 
 
 # ------ Create Lora configuration -------

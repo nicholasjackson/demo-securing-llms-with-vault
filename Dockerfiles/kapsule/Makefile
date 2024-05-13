@@ -1,5 +1,5 @@
-REPO=nicholasjackson/securing-llms-with-vault
-VERSION=v0.1.0
+REPO=nicholasjackson/kapsule
+VERSION=v0.0.7
 
 build_and_push:
 	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes

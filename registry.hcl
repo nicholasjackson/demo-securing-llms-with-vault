@@ -43,6 +43,12 @@ resource "container" "auth" {
     destination = "/etc/auth/htpasswd"
   }
 
+  # cache
+  volume {
+    source      = "./cache/registry"
+    destination = "/var/lib/registry"
+  }
+
   volume {
     source      = resource.certificate_leaf.registry.output
     destination = "/certs"

@@ -1,5 +1,5 @@
 resource "container" "ollama" {
-  disabled = true
+  disabled = false
 
   image {
     name = "ollama/ollama:latest"

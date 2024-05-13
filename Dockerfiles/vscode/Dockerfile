@@ -4,7 +4,7 @@ FROM ghcr.io/ggerganov/llama.cpp:full AS llama-cpp
 FROM ghcr.io/jumppad-labs/vscode:base-v0.4.0
 
 ARG TARGETARCH
-ARG KAPSULE_VERSION=0.0.5
+ARG KAPSULE_VERSION=0.0.7
 
 # Install default packages
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \

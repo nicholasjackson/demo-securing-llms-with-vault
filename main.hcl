@@ -3,11 +3,11 @@ variable "docs_url" {
 }
 
 resource "network" "local" {
-  subnet = "10.100.0.0/16"
+  subnet = "10.6.0.0/16"
 }
 
 variable "auth_ip_address" {
-  default = "10.100.0.183"
+  default = "10.6.0.183"
 }
 
 //docker run --rm -it --gpus=all nvcr.io/nvidia/k8s/cuda-sample:nbody nbody -gpu -benchmark

@@ -33,6 +33,12 @@ spec:
         - name: http-ui
           containerPort: 8080
           protocol: TCP
+        volumeMounts:
+        - name: ollama-cache
+          mountPath: /
+    volumes:
+    - name: ollama-cache
+      emptyDir: {}
 
 ---
 apiVersion: v1

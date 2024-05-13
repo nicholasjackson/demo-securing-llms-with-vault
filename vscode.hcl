@@ -109,10 +109,10 @@ resource "container" "vscode" {
     }
   }
 
-  //resources {
-  //  gpu {
-  //    driver     = "nvidia"
-  //    device_ids = ["0"]
-  //  }
-  //}
+  resources {
+    gpu {
+      driver     = "nvidia"
+      device_ids = ["0"]
+    }
+  }
 }

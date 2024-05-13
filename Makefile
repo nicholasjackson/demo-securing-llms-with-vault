@@ -26,3 +26,52 @@ build_local_python:
 	  ./Dockerfiles/python \
 		--load
 	docker buildx rm -f vscode
+
+build_mistral_with_kapsule_ollama:
+	kapsule build \
+		--debug \
+		--output ./cache/ollama/models \
+		--format ollama \
+		-f ./working/models/base/Modelfile \
+		-t auth.demo.gs:5001/nicholasjackson/mistral:plain \
+		./working/output/final
+
+build_mistral_with_kapsule_oci:
+	kapsule build \
+		--debug \
+		-f ./working/models/base/Modelfile \
+		-t auth.container.local.jmpd.in:5001/nicholasjackson/mistral:plain \
+		--username=admin \
+		--password=password \
+		--insecure \
+		./working/output/final
+
+build_trained_with_kapsule_ollama:
+	kapsule build \
+		--debug \
+		--output ./cache/ollama/models \
+		--format ollama \
+		-f ./working/models/trained/Modelfile \
+		-t auth.demo.gs:5001/nicholasjackson/trained:plain \
+		./working/output/final
+
+build_trained_with_kapsule_oci:
+	kapsule build \
+		--debug \
+		-f ./working/models/trained/Modelfile \
+		-t auth.demo.gs:5001/nicholasjackson/trained:plain \
+		--username=admin \
+		--password=password \
+		--insecure \
+		./working/output/final
+
+
+pull_mistral_with_kapsule_ollama:
+	kapsule pull \
+		--debug \
+		--output ./cache/ollama/models \
+		--format ollama \
+		--username=admin \
+		--password=password \
+		--insecure \
+		auth.container.local.jmpd.in:5001/nicholasjackson/mistral:plain \

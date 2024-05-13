@@ -1,7 +1,10 @@
 resource "k8s_cluster" "k3s" {
   config {
     docker {
-      no_proxy  = ["${resource.container.auth.container_name}:5001"]
+      no_proxy  = [
+        "${resource.container.auth.container_name}:5001",
+        "auth.demo.gs:5001"
+      ]
     }
   }
 
